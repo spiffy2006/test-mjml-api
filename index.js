@@ -25,7 +25,11 @@ function getTemplate(template, data = {}) {
   if (!templates[template]) {
     return null;
   }
-  return templates[template](withSubTemplates);
+  const t = templates[template](withSubTemplates);
+  if (!t) {
+    return null;
+  }
+  return mjml(t).html;
 }
 
 
@@ -36,7 +40,7 @@ router.get('/mjml/:template', (ctx, next) => {
   if (file === null) {
     ctx.body = 'No template exists'
   }
-  ctx.body = mjml(file).html;
+  ctx.body = file;
 });
 
 router.get('/', async (ctx, next) => {
