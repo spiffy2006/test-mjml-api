@@ -5,11 +5,27 @@ const router = new Router();
 const mjml = require('mjml');
 const templates = require('./templates');
 
+function parseSubTemplates({ sub_templates = null, ...data }) {
+  if (!sub_templates) {
+    return data;
+  }
+  const subTemplates = {};
+  const split = String(sub_templates).split(",");
+  split.map(s => s.split(':')).forEach(([prop, template]) => {
+    const t = getTemplate(template, data);
+    if (t) {
+      subTemplates[prop] = t;
+    }
+  });
+  return { ...data, ...subTemplates };
+}
+
 function getTemplate(template, data = {}) {
+  const withSubTemplates = parseSubTemplates(data)
   if (!templates[template]) {
     return null;
   }
-  return templates[template](data);
+  return templates[template](withSubTemplates);
 }
 
 
