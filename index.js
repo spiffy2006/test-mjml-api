@@ -12,7 +12,7 @@ function parseSubTemplates({ sub_templates = null, ...data }) {
   const subTemplates = {};
   const split = String(sub_templates).split(",");
   split.map(s => s.split(':')).forEach(([prop, template]) => {
-    const t = getTemplate(template, data);
+    const t = getTemplate(template, data, true);
     if (t) {
       subTemplates[prop] = t;
     }
@@ -20,12 +20,15 @@ function parseSubTemplates({ sub_templates = null, ...data }) {
   return { ...data, ...subTemplates };
 }
 
-function getTemplate(template, data = {}) {
-  const withSubTemplates = parseSubTemplates(data)
+function getTemplate(template, data = {}, isSub = false) {
+  const withSubTemplates = parseSubTemplates(data);
   if (!templates[template]) {
     return null;
   }
   const t = templates[template](withSubTemplates);
+  if (isSub) {
+    return t || null;
+  }
   if (!t) {
     return null;
   }
