@@ -12,7 +12,7 @@ function parseSubTemplates({ sub_templates = null, ...data }) {
   const subTemplates = {};
   const split = String(sub_templates).split(",");
   split.map(s => s.split(':')).forEach(([prop, template]) => {
-    const t = getTemplate(template, data, true);
+    const t = getTemplate(template, { ...data, ...subTemplates }, true);
     if (t) {
       subTemplates[prop] = t;
     }
