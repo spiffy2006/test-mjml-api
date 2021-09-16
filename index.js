@@ -29,7 +29,11 @@ function getTemplate(template, data = {}) {
   if (!t) {
     return null;
   }
-  return mjml(t).html;
+  try {
+    return mjml(t).html;
+  } catch (e) {
+    return t;
+  }
 }
 
 
