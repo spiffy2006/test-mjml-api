@@ -8,6 +8,8 @@
 You can also use templates in other templates by adding a `sub_templates` query param and then comma separating main template properties and the template name joined by a colon.
 Ex. localhost:3000/mjml/:template?sub_templates=nameOfVarInMainTemplate:template-file-name,nameOfOtherVarInMainTemplate:other-template-file-name
 
+If you have a sub template that you need without the main html and head tag add `onlyBody=1` as a query param.
+
 ## How to add templates
 
 All of the files except for index.js in the templates folder will be ignored by git.
