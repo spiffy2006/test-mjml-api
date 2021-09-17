@@ -1,9 +1,26 @@
 const Koa = require('koa');
 const Router = require('@koa/router');
+const cheerio = require('cheerio');
 const app = new Koa();
 const router = new Router();
 const mjml = require('mjml');
 const templates = require('./templates');
+
+function wrap(mjmlCode) {
+  if (mjmlCode.indexOf('<mjml>') > -1) {
+    return mjmlCode;
+  }
+  return `
+  <mjml>
+    <mj-head>
+        <mj-font name="Nunito Sans" href="https://fonts.googleapis.com/css?family=Nunito Sans" />
+        <mj-breakpoint width="750px" />
+    </mj-head>
+    <mj-body>
+        ${mjmlCode}
+    </mj-body>
+</mjml>`;
+}
 
 function parseSubTemplates({ sub_templates = null, ...data }) {
   if (!sub_templates) {
@@ -33,7 +50,7 @@ function getTemplate(template, data = {}, isSub = false) {
     return null;
   }
   try {
-    return mjml(t).html;
+    return mjml(wrap(t)).html;
   } catch (e) {
     return t;
   }
@@ -46,6 +63,11 @@ router.get('/mjml/:template', (ctx, next) => {
   const file = getTemplate(ctx.params.template, ctx.request.query);
   if (file === null) {
     ctx.body = 'No template exists'
+  }
+  if (ctx.request.query.onlyBody) {
+    const $ = cheerio.load(file);
+    ctx.body = $('body').html();
+    return;
   }
   ctx.body = file;
 });
